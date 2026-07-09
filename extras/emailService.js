@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "smtp.gmail.com",
   port: parseInt(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_PORT === "465", // true for 465, false for other ports
+  secure: process.env.EMAIL_PORT === "465",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -243,7 +243,129 @@ const sendAdminNotification = async (applicantData, jobTitle, vacancyId) => {
   }
 };
 
+// ✅ Send password reset email
+const sendPasswordResetEmail = async (email, firstName, resetUrl) => {
+  const subject = "Reset Your Password - TAC 10 MEDIA";
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reset Your Password</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f9f9f9;
+        }
+        .container {
+          background-color: #ffffff;
+          border-radius: 10px;
+          padding: 30px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+          text-align: center;
+          padding-bottom: 20px;
+          border-bottom: 2px solid #f0b90b;
+        }
+        .header h1 {
+          color: #f0b90b;
+          font-size: 24px;
+          margin: 0;
+        }
+        .content {
+          padding: 20px 0;
+        }
+        .btn {
+          display: inline-block;
+          background-color: #f0b90b;
+          color: #1a1a1a;
+          padding: 12px 30px;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+          margin: 15px 0;
+        }
+        .footer {
+          text-align: center;
+          padding-top: 20px;
+          border-top: 1px solid #eee;
+          font-size: 12px;
+          color: #888;
+        }
+        .warning {
+          background-color: #fef9e7;
+          border-left: 4px solid #f0b90b;
+          padding: 12px 16px;
+          border-radius: 4px;
+          margin: 15px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🎬 TAC 10 MEDIA</h1>
+        </div>
+
+        <div class="content">
+          <h2>Hi ${firstName},</h2>
+
+          <p>We received a request to reset your password for your TAC 10 MEDIA account.</p>
+
+          <p>Click the button below to create a new password:</p>
+
+          <div style="text-align: center;">
+            <a href="${resetUrl}" class="btn">Reset Password</a>
+          </div>
+
+          <div class="warning">
+            <p><strong>⚠️ This link will expire in 1 hour.</strong></p>
+            <p style="margin: 0; font-size: 14px;">If you didn't request a password reset, you can safely ignore this email.</p>
+          </div>
+
+          <p>If the button doesn't work, copy and paste this URL into your browser:</p>
+          <p style="word-break: break-all; font-size: 12px; color: #666;">${resetUrl}</p>
+
+          <p>Best regards,<br>
+          <strong>The TAC 10 MEDIA Team</strong></p>
+        </div>
+
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} TAC 10 MEDIA. All rights reserved.</p>
+          <p><small>This is an automated message. Please do not reply to this email.</small></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || `"TAC 10 MEDIA" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Password reset email sent to ${email}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("❌ Error sending password reset email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
   sendApplicationAcknowledgment,
   sendAdminNotification,
+  sendPasswordResetEmail,
 };

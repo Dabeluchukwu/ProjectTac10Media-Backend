@@ -33,28 +33,17 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Controls user permissions
-role: {
-
-  type: String,
-
-  enum: [
-
-    "superAdmin",
-
-    "admin",
-
-    "client",
-
-    "student",
-
-    "instructor",
-
-  ],
-
-  default: "client",
-
-},
+    role: {
+      type: String,
+      enum: [
+        "superAdmin",
+        "admin",
+        "client",
+        "student",
+        "instructor",
+      ],
+      default: "client",
+    },
 
     profileImage: {
       type: String,
@@ -66,14 +55,21 @@ role: {
       default: false,
     },
 
+    // ✅ For password reset
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpiry: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-
 const User = mongoose.model("User", userSchema);
-
 
 module.exports = User;
