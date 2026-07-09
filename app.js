@@ -39,18 +39,42 @@ app.use(helmet());
  * CORS Middleware - Fixed for Express 5
  */
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://project-tac10-media-frontend-7z4mizoxo.vercel.app",
+      "https://project-tac10-media-frontend.vercel.app",
+      "https://projecttac10media-frontend.vercel.app"
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Paystack-Signature", "Accept"],
+  allowedHeaders: [
+    "Content-Type", 
+    "Authorization", 
+    "X-Paystack-Signature", 
+    "Accept",
+    "Origin",
+    "X-Requested-With"
+  ],
   exposedHeaders: ["Set-Cookie"],
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
 
-// ✅ Apply CORS to all routes (handles OPTIONS automatically)
+// Apply to your app
 app.use(cors(corsOptions));
-
 /**
  * Logger
  */
