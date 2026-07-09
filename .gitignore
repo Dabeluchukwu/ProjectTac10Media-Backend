@@ -1,0 +1,33 @@
+# Node Modules
+node_modules/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Uploads
+uploads/
+temp/
+
+# Build
+dist/
+build/
+
+# MongoDB Data
+data/
