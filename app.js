@@ -30,7 +30,6 @@ const ApiError = require("./utils/ApiError");
 
 const app = express();
 
-
 // ✅ 1. CORS MUST be FIRST
 const corsOptions = {
   origin: [
@@ -47,39 +46,57 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-// Apply to your app
+// Apply CORS
 app.use(cors(corsOptions));
 
-/**
- * Security Middleware
- */
-app.use(helmet());
-
-// /**
-//  * CORS Middleware - Fixed for Express 5
-//  */
-// const corsOptions = {
-//   origin: [
-//     "http://localhost:5173",
-//     "http://localhost:5174",
-//     /^https:\/\/project-tac10-media-frontend-[a-zA-Z0-9-]*\.vercel\.app$/,
-//     /^https:\/\/projecttac10media-frontend-[a-zA-Z0-9-]*\.vercel\.app$/,
-//     "https://project-tac10-media-frontend.vercel.app",
-//     "https://projecttac10media-frontend.vercel.app"
-//   ],
-//   credentials: true,
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//   allowedHeaders: [
-//     "Content-Type", 
-//     "Authorization", 
-//     "X-Paystack-Signature", 
-//     "Accept",
-//     "Origin",
-//     "X-Requested-With"
-//   ],
-//   exposedHeaders: ["Set-Cookie"],
-//   optionsSuccessStatus: 204, // ✅ This tells the browser the preflight was successful
-// };
+// ✅ 2. UPDATED HELMET with Paystack CSP
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://checkout.paystack.com",
+          "https://js.paystack.co",
+          "https://*.paystack.com",
+          "blob:", // ✅ Required for Paystack checkout
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https:",
+          "blob:",
+        ],
+        connectSrc: [
+          "'self'",
+          "https://api.paystack.co",
+          "https://*.paystack.com",
+          "https://checkout.paystack.com",
+        ],
+        frameSrc: [
+          "https://checkout.paystack.com",
+          "https://*.paystack.com",
+        ],
+        fontSrc: [
+          "'self'",
+          "https:",
+          "data:",
+        ],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    // ✅ Helps with Paystack iframes
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 /**
  * Logger
