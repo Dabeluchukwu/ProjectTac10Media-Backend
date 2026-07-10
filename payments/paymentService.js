@@ -1,6 +1,4 @@
 // 
-
-
 // NEW VERSION AFTER CREATING BOOKINGS
 
 // Import Paystack axios configuration
@@ -20,6 +18,9 @@ const Course = require("../courses/courseModel");
 
 // Import error handler
 const ApiError = require("../utils/ApiError");
+
+// ✅ Production frontend URL - change this if your URL changes
+const FRONTEND_URL = "https://project-tac10-media-frontend.vercel.app";
 
 // Initialize Paystack payment
 const initializePayment = async (userId, paymentData) => {
@@ -97,14 +98,16 @@ const initializePayment = async (userId, paymentData) => {
     console.log("  Email:", paymentData.email);
     console.log("  Amount (kobo):", amount * 100);
     console.log("  Reference:", reference);
-    // ✅ Always redirect to payment verification page first
-    console.log("  Callback URL:", `${process.env.FRONTEND_URL}/payment/verify?purpose=${purpose}`);
+    
+    // ✅ UPDATED: Use production URL directly
+    const callbackUrl = `${FRONTEND_URL}/payment/verify?purpose=${purpose}`;
+    console.log("  Callback URL:", callbackUrl);
     
     const response = await paystack.post("/transaction/initialize", {
       email: paymentData.email,
       amount: amount * 100,
       reference,
-      callback_url: `${process.env.FRONTEND_URL}/payment/verify?purpose=${purpose}`,
+      callback_url: callbackUrl,
     });
     
     console.log("✅ Paystack response received");
