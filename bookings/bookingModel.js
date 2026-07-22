@@ -79,11 +79,11 @@ const bookingSchema = new mongoose.Schema(
     },
 
     // Payment tracking
-    paymentStatus: {
-      type: String,
-      enum: ["unpaid", "paid"],
-      default: "unpaid",
-    },
+paymentStatus: {
+  type: String,
+  enum: ["unpaid", "paid", "pending"], 
+  default: "unpaid",
+},
     paymentReference: {
       type: String,
       default: null,
@@ -94,6 +94,8 @@ const bookingSchema = new mongoose.Schema(
       enum: ["paystack", "stripe", "manual"],
       default: "paystack",
     },
+
+    
 
     paidAt: {
       type: Date,

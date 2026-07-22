@@ -27,8 +27,8 @@ const registrationSchema = new mongoose.Schema(
     // Payment tracking
     paymentStatus: {
       type: String,
-      enum: ["unpaid", "paid", "pending", "failed", "refunded"], // ✅ Added "pending", "failed", "refunded"
-      default: "pending", // ✅ Changed default to "pending"
+      enum: ["unpaid", "paid", "pending", "failed", "refunded"],
+      default: "pending",
     },
 
     // Amount paid
@@ -46,6 +46,13 @@ const registrationSchema = new mongoose.Schema(
     paystackReference: {
       type: String,
       default: null,
+    },
+
+    // ✅ Add paymentMethod field (same as Booking)
+    paymentMethod: {
+      type: String,
+      enum: ["paystack", "stripe", "manual"],
+      default: "paystack",
     },
 
     paidAt: {

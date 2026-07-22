@@ -24,13 +24,16 @@ const progressRoutes = require("./courseProgress/progressRoutes");
 const examRoutes = require("./exams/examRoutes");
 const certificateRoutes = require("./certificates/certificateRoutes");
 const dashboardRoutes = require("./dashboard/dahsboardRoutes");
+const bankAccountRoutes = require("./bank/bankAccountRoutes");
+const manualPaymentRoutes = require("./payments/manualPaymentRoutes");
+
 
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const ApiError = require("./utils/ApiError");
 
 const app = express();
 
-// ✅ 1. CORS MUST be FIRST
+// CORS MUST be FIRST
 const corsOptions = {
   origin: [
     "http://localhost:5173",
@@ -49,7 +52,7 @@ const corsOptions = {
 // Apply CORS
 app.use(cors(corsOptions));
 
-// ✅ 2. UPDATED HELMET with Paystack CSP
+// Hamlet config
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -153,6 +156,8 @@ app.use("/api/v1/course-progress", progressRoutes);
 app.use("/api/v1/exams", examRoutes);
 app.use("/api/v1/certificates", certificateRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/bank-accounts", bankAccountRoutes);
+app.use("/api/v1/manual-payments", manualPaymentRoutes);
 
 /**
  * 404 Handler
